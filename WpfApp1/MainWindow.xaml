@@ -1,0 +1,53 @@
+﻿<Window x:Class="WpfApp1.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:WpfApp1"
+        mc:Ignorable="d"
+        Title="Tests" Height="Auto" Width="Auto" MinWidth="400" MinHeight="300" ResizeMode="CanResizeWithGrip">
+    <i:Interaction.Triggers>
+        <i:EventTrigger EventName="MouseLeftButtonDown">
+            <i:InvokeCommandAction Command="{Binding ResetCursorCommand}"/>
+        </i:EventTrigger>
+    </i:Interaction.Triggers>
+    <Window.InputBindings>
+        <KeyBinding Key="Esc"
+         Command="{Binding ResetCursorCommand}"/>
+    </Window.InputBindings>
+    
+    <Window.Resources>
+        <Style x:Key="Shadow" TargetType="{x:Type Button}">
+            <Setter Property="Effect">
+                <Setter.Value>
+                    <DropShadowEffect Color="Black" Direction="310" ShadowDepth="8" Opacity="0.3"/>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Window.Resources>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <Button FontSize="{Binding FontSize}" AutomationProperties.HelpText="Click me" Grid.Row="0" Margin="10,10,0,10" Style="{StaticResource Shadow}" HorizontalAlignment="Left" Content="Add Group" Width="auto" Height="{Binding Height}" Command="{Binding AddGroupCommand}"/>
+        <Button FontSize="{Binding FontSize}" IsDefault="True" Grid.Row="1" Margin="10,0,0,0" Style="{StaticResource Shadow}" HorizontalAlignment="Left" Content="Add Control" Width="auto" Height="{Binding Height}" Command="{Binding AddControlCommand}"/>
+        <Button FontSize="{Binding FontSize}" Grid.Row="0" Margin="10,10,10,10" Style="{StaticResource Shadow}" HorizontalAlignment="Right" Content="Remove Group/Control" Width="auto" Height="{Binding Height}" Command="{Binding RemoveElementCommand}"/>
+        <Border BorderBrush="{Binding BorderBrush, Mode=OneWay}"  Grid.Row="1" Margin="0,0,10,0" HorizontalAlignment="Right" BorderThickness="2" >
+            <Button FontSize="{Binding FontSize}" Style="{StaticResource Shadow}" Content="Highlight" Command="{Binding ChangeColor}" Width="auto" Height="{Binding Height}"/>
+        </Border>
+        <TreeView FontSize="{Binding FontSize}" SelectedItemChanged="TreeView_SelectedItemChanged" Grid.Row="2" Height="Auto" MinHeight="100" Width="Auto" 
+                  ItemsSource="{Binding TNodes}" Margin="10,20,10,0" VerticalAlignment="Center" >
+            <TreeView.ItemTemplate>
+                <HierarchicalDataTemplate ItemsSource="{Binding Nodes}">
+                    <StackPanel Orientation="Horizontal">
+                        <Image Source="{Binding Image}" Margin="0,0,10,0"/>
+                        <TextBlock Text="{Binding Name}" />
+                    </StackPanel>
+                </HierarchicalDataTemplate>
+            </TreeView.ItemTemplate>
+        </TreeView>
+    </Grid>
+</Window>

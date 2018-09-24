@@ -5,6 +5,12 @@ using System.Windows.Media.Imaging;
 using System.Collections.ObjectModel;
 using System.Windows.Controls;
 using System.Windows.Media;
+using System.Windows.Automation;
+
+using Gma.System.MouseKeyHook.HotKeys;
+using Gma.System.MouseKeyHook.Implementation;
+using Gma.System.MouseKeyHook.WinApi;
+using Gma.System.MouseKeyHook;
 
 namespace WpfApp1
 {
@@ -20,7 +26,6 @@ namespace WpfApp1
             InitializeComponent();
             main = new MainWindowViewModel(c => this.Cursor = c);
             DataContext = main;
-            Button a = new Button();
         }
         private void TreeView_SelectedItemChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
         {

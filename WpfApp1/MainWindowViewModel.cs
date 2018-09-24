@@ -6,12 +6,16 @@ using System.Windows;
 using System.Windows.Media;
 using System.Windows.Controls;
 using System.Collections.Generic;
+using Accessibility;
+using System.Text;
+using gma.System.Windows;
 
 namespace WpfApp1
 {
     class MainWindowViewModel : BindableBase
     {
         #region margins
+        UserActivityHook actHook;
         Brush borderBrush;
         Action<Cursor> setCursor;
         Int32 GroupCount;
@@ -24,11 +28,13 @@ namespace WpfApp1
         public ObservableCollection<Node> TNodes { get; set; }
         public Brush BorderBrush { get { return borderBrush; } set { borderBrush = value; OnPropertyChanged("BorderBrush"); } }
         public Single FontSize { get { return fontSize; } set { fontSize = value; OnPropertyChanged("FontSize"); } }
-        public Single Height { get { return height; } set { height = value;OnPropertyChanged("Height"); } }
+        public Single Height { get { return height; } set { height = value; OnPropertyChanged("Height"); } }
         #endregion
         #region constructors
         public MainWindowViewModel(Action<Cursor> cursor)
         {
+            actHook = new UserActivityHook();
+            actHook.OnMouseActivity += new System.Windows.Forms.MouseEventHandler(MyKeyDown);
             Height = 15;
             BorderBrush = Brushes.White;
             setCursor = cursor;
@@ -39,6 +45,30 @@ namespace WpfApp1
         }
         #endregion
         #region methods
+        private void MyKeyDown(object sender, System.Windows.Forms.MouseEventArgs e)
+        {
+            if (e.Button == System.Windows.Forms.MouseButtons.Left)
+            {
+                IAccessible z = actHook.GetObjectUnderMouse(new UserActivityHook.POINT(e.X, e.Y));
+                if (z != null)
+                {
+                    try
+                    {
+                        if (TNodes.Count == 0 || child == null)
+                        {
+                            TNodes.Add(new ControlClass() { Name = "Control" + controlCount + z.accName + z.accRole + z.accValue, FirstName = "", role = "", value = "", Image = new BitmapImage(new Uri("Resources/fileTxt.png", UriKind.Relative)) });
+                            controlCount++;
+                        }
+                        else
+                        {
+                            child.Nodes.Add(new ControlClass() { Name = "Control" + controlCount + z.accName + z.accRole + z.accValue, FirstName = "", role = "", value = "", Image = new BitmapImage(new Uri("Resources/fileTxt.png", UriKind.Relative)) });
+                            controlCount++;
+                        }
+                    }
+                    catch (Exception) { };
+                }
+            }
+        }
         private void ChangeFontSize()
         {
             if (SystemParameters.PrimaryScreenHeight <= 600 && SystemParameters.PrimaryScreenWidth <= 800)
@@ -114,16 +144,6 @@ namespace WpfApp1
         }
         private void OnAddControl(object a)
         {
-            if (TNodes.Count == 0 || child == null)
-            {
-                TNodes.Add(new ControlClass() { Name = "Control" + controlCount, FirstName = "Jon Do", role = role.sysadmin, value = 1, Image = new BitmapImage(new Uri("Resources/fileTxt.png", UriKind.Relative)) });
-                controlCount++;
-            }
-            else
-            {
-                child.Nodes.Add(new ControlClass() { Name = "Control" + controlCount, FirstName = "Jon Do", role = role.sysadmin, value = 1, Image = new BitmapImage(new Uri("Resources/fileTxt.png", UriKind.Relative)) });
-                controlCount++;
-            }
             setCursor(Cursors.Cross);
         }
         private void RemoveEl(Node i)

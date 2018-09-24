@@ -32,7 +32,7 @@
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
-        <Button FontSize="{Binding FontSize}" AutomationProperties.HelpText="Click me" Grid.Row="0" Margin="10,10,0,10" Style="{StaticResource Shadow}" HorizontalAlignment="Left" Content="Add Group" Width="auto" Height="{Binding Height}" Command="{Binding AddGroupCommand}"/>
+        <Button FontSize="{Binding FontSize}" Grid.Row="0" Margin="10,10,0,10" Style="{StaticResource Shadow}" HorizontalAlignment="Left" Content="Add Group" Width="auto" Height="{Binding Height}" Command="{Binding AddGroupCommand}"/>
         <Button FontSize="{Binding FontSize}" IsDefault="True" Grid.Row="1" Margin="10,0,0,0" Style="{StaticResource Shadow}" HorizontalAlignment="Left" Content="Add Control" Width="auto" Height="{Binding Height}" Command="{Binding AddControlCommand}"/>
         <Button FontSize="{Binding FontSize}" Grid.Row="0" Margin="10,10,10,10" Style="{StaticResource Shadow}" HorizontalAlignment="Right" Content="Remove Group/Control" Width="auto" Height="{Binding Height}" Command="{Binding RemoveElementCommand}"/>
         <Border BorderBrush="{Binding BorderBrush, Mode=OneWay}"  Grid.Row="1" Margin="0,0,10,0" HorizontalAlignment="Right" BorderThickness="2" >
@@ -42,10 +42,10 @@
                   ItemsSource="{Binding TNodes}" Margin="10,20,10,0" VerticalAlignment="Center" >
             <TreeView.ItemTemplate>
                 <HierarchicalDataTemplate ItemsSource="{Binding Nodes}">
-                    <StackPanel Orientation="Horizontal">
+                    <DockPanel>
                         <Image Source="{Binding Image}" Margin="0,0,10,0"/>
                         <TextBlock Text="{Binding Name}" />
-                    </StackPanel>
+                    </DockPanel>
                 </HierarchicalDataTemplate>
             </TreeView.ItemTemplate>
         </TreeView>

@@ -4,11 +4,14 @@ using System.Collections.ObjectModel;
 using System.Windows.Media.Imaging;
 using System.Windows;
 using System.Windows.Media;
+using System.Windows.Controls;
+using System.Collections.Generic;
+using Accessibility;
+using System.Text;
 using gma.System.Windows;
-using UIAutomationClient;
 
 namespace WpfApp1
-{ 
+{
     class MainWindowViewModel : BindableBase
     {
         #region margins
@@ -20,7 +23,6 @@ namespace WpfApp1
         Node child;
         Single fontSize;
         Single height;
-        Boolean isClick;
         #endregion
         #region properties
         public ObservableCollection<Node> TNodes { get; set; }
@@ -34,38 +36,37 @@ namespace WpfApp1
             actHook = new UserActivityHook();
             actHook.OnMouseActivity += new System.Windows.Forms.MouseEventHandler(MyKeyDown);
             Height = 15;
-            BorderBrush = Brushes.Gray;
+            BorderBrush = Brushes.White;
             setCursor = cursor;
             GroupCount = 1;
             controlCount = 1;
             TNodes = new ObservableCollection<Node>();
-            isClick = false;
             ChangeFontSize();
         }
         #endregion
         #region methods
         private void MyKeyDown(object sender, System.Windows.Forms.MouseEventArgs e)
         {
-            if (e.Button == System.Windows.Forms.MouseButtons.Left && isClick)
+            if (e.Button == System.Windows.Forms.MouseButtons.Left)
             {
-                try
+                IAccessible z = actHook.GetObjectUnderMouse(new UserActivityHook.POINT(e.X, e.Y));
+                if (z != null)
                 {
-                    tagPOINT point = new tagPOINT { x = e.X, y = e.Y };
-                    IUIAutomation UIA = new CUIAutomation();
-                    IUIAutomationElement element = UIA.ElementFromPoint(point);
-                    if (TNodes.Count == 0 || child == null)
+                    try
                     {
-                        TNodes.Add(new ControlClass() { Name = "Control" + controlCount + "(" + element.CurrentName + " " + element.CurrentAriaRole + " " + element.CurrentFrameworkId + ")", FirstName = element.CurrentName, role = element.CurrentAriaRole, value = element.CurrentFrameworkId, Image = new BitmapImage(new Uri("Resources/fileTxt.png", UriKind.Relative)) });
-                        controlCount++;
+                        if (TNodes.Count == 0 || child == null)
+                        {
+                            TNodes.Add(new ControlClass() { Name = "Control" + controlCount + z.accName + z.accRole + z.accValue, FirstName = "", role = "", value = "", Image = new BitmapImage(new Uri("Resources/fileTxt.png", UriKind.Relative)) });
+                            controlCount++;
+                        }
+                        else
+                        {
+                            child.Nodes.Add(new ControlClass() { Name = "Control" + controlCount + z.accName + z.accRole + z.accValue, FirstName = "", role = "", value = "", Image = new BitmapImage(new Uri("Resources/fileTxt.png", UriKind.Relative)) });
+                            controlCount++;
+                        }
                     }
-                    else
-                    {
-                        child.Nodes.Add(new ControlClass() { Name = "Control" + controlCount + "(" + element.CurrentName + " " + element.CurrentAriaRole + " " + element.CurrentFrameworkId + ")", FirstName = element.CurrentName, role = element.CurrentAriaRole, value = element.CurrentFrameworkId, Image = new BitmapImage(new Uri("Resources/fileTxt.png", UriKind.Relative)) });
-                        controlCount++;
-                    }
-                    OnResetCursor(null);
+                    catch (Exception) { };
                 }
-                catch (Exception) { }
             }
         }
         private void ChangeFontSize()
@@ -119,15 +120,14 @@ namespace WpfApp1
         }
         private void OnChangeBrush(object a)
         {
-            if (BorderBrush == Brushes.Gray)
+            if (BorderBrush == Brushes.White)
             {
                 BorderBrush = Brushes.Red;
             }
             else
             {
-                BorderBrush = Brushes.Gray;
+                BorderBrush = Brushes.White;
             }
-            setCursor(Cursors.Arrow);
         }
         private void OnAddGroup(object a)
         {
@@ -141,11 +141,9 @@ namespace WpfApp1
                 child.Nodes.Add(new Node() { Name = "Group" + GroupCount, Image = new BitmapImage(new Uri("Resources/directory.bmp", UriKind.Relative)) });
                 GroupCount++;
             }
-            setCursor(Cursors.Arrow);
         }
         private void OnAddControl(object a)
         {
-            isClick = true;
             setCursor(Cursors.Cross);
         }
         private void RemoveEl(Node i)
@@ -179,11 +177,9 @@ namespace WpfApp1
                     }
                 }
             }
-            setCursor(Cursors.Arrow);
         }
         private void OnResetCursor(object a)
         {
-            isClick = false;
             setCursor(Cursors.Arrow);
         }
         internal void OnSelectedItemChanged(Node newValue)

@@ -1,10 +1,9 @@
 using System;
 using System.Runtime.InteropServices;
 using System.Reflection;
-using System.Threading;
 using System.Windows.Forms;
 using System.ComponentModel;
-using Accessibility;
+using UIAutomationClient;
 using System.Drawing;
 
 namespace gma.System.Windows

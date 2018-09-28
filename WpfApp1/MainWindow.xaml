@@ -16,7 +16,7 @@
         <KeyBinding Key="Esc"
          Command="{Binding ResetCursorCommand}"/>
     </Window.InputBindings>
-    
+
     <Window.Resources>
         <Style x:Key="Shadow" TargetType="{x:Type Button}">
             <Setter Property="Effect">
@@ -30,24 +30,30 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
+            <RowDefinition/>
         </Grid.RowDefinitions>
-        <Button FontSize="{Binding FontSize}" Grid.Row="0" Margin="10,10,0,10" Style="{StaticResource Shadow}" HorizontalAlignment="Left" Content="Add Group" Width="auto" Height="{Binding Height}" Command="{Binding AddGroupCommand}"/>
-        <Button FontSize="{Binding FontSize}" IsDefault="True" Grid.Row="1" Margin="10,0,0,0" Style="{StaticResource Shadow}" HorizontalAlignment="Left" Content="Add Control" Width="auto" Height="{Binding Height}" Command="{Binding AddControlCommand}"/>
-        <Button FontSize="{Binding FontSize}" Grid.Row="0" Margin="10,10,10,10" Style="{StaticResource Shadow}" HorizontalAlignment="Right" Content="Remove Group/Control" Width="auto" Height="{Binding Height}" Command="{Binding RemoveElementCommand}"/>
-        <Border BorderBrush="{Binding BorderBrush, Mode=OneWay}"  Grid.Row="1" Margin="0,0,10,0" HorizontalAlignment="Right" BorderThickness="2" >
-            <Button FontSize="{Binding FontSize}" Style="{StaticResource Shadow}" Content="Highlight" Command="{Binding ChangeColor}" Width="auto" Height="{Binding Height}"/>
+        <Button FontSize="{Binding FontSize}" Grid.Row="0" Margin="10,10,0,10" Style="{StaticResource Shadow}" 
+                HorizontalAlignment="Left" Content="Add Group" Width="auto" Height="{Binding Height}" Command="{Binding AddGroupCommand}"/>
+        <Button FontSize="{Binding FontSize}" IsDefault="True" Grid.Row="1" Margin="10,0,0,0" Style="{StaticResource Shadow}" 
+                HorizontalAlignment="Left" Content="Add Control" Width="auto" Height="{Binding Height}" Command="{Binding AddControlCommand}"/>
+        <Button FontSize="{Binding FontSize}" Grid.Row="0" Margin="10,10,10,10" Style="{StaticResource Shadow}" 
+                HorizontalAlignment="Right" Content="Remove Group/Control" Width="auto" Height="{Binding Height}" Command="{Binding RemoveElementCommand}"/>
+        <Button BorderBrush="{Binding BorderBrush, Mode=OneWay}"  Grid.Row="1" Margin="0,0,10,0" HorizontalAlignment="Right" BorderThickness="1" 
+                FontSize="{Binding FontSize}" Style="{StaticResource Shadow}" Content="Highlight" 
+                Command="{Binding ChangeColor}" Width="auto" Height="{Binding Height}"/>
+        <Border Grid.Row="2" Margin="10,20,10,0" BorderThickness="1" BorderBrush="Gray"  MinHeight="100">
+            <ScrollViewer>
+                <TreeView FontSize="{Binding FontSize}"  MinHeight="100" SelectedItemChanged="TreeView_SelectedItemChanged" ItemsSource="{Binding TNodes}" BorderThickness="0">
+                    <TreeView.ItemTemplate>
+                        <HierarchicalDataTemplate ItemsSource="{Binding Nodes}">
+                            <DockPanel>
+                                <Image Source="{Binding Image}" Margin="0,0,10,0"/>
+                                <TextBlock Text="{Binding Name}" />
+                            </DockPanel>
+                        </HierarchicalDataTemplate>
+                    </TreeView.ItemTemplate>
+                </TreeView>
+            </ScrollViewer>
         </Border>
-        <TreeView FontSize="{Binding FontSize}" SelectedItemChanged="TreeView_SelectedItemChanged" Grid.Row="2" Height="Auto" MinHeight="100" Width="Auto" 
-                  ItemsSource="{Binding TNodes}" Margin="10,20,10,0" VerticalAlignment="Center" >
-            <TreeView.ItemTemplate>
-                <HierarchicalDataTemplate ItemsSource="{Binding Nodes}">
-                    <DockPanel>
-                        <Image Source="{Binding Image}" Margin="0,0,10,0"/>
-                        <TextBlock Text="{Binding Name}" />
-                    </DockPanel>
-                </HierarchicalDataTemplate>
-            </TreeView.ItemTemplate>
-        </TreeView>
     </Grid>
 </Window>

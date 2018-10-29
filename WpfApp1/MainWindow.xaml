@@ -6,7 +6,9 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:WpfApp1"
         mc:Ignorable="d"
-        Title="Tests" Height="Auto" Width="Auto" MinWidth="400" MinHeight="300" ResizeMode="CanResizeWithGrip">
+        Title="Test" Height="Auto" Width="Auto" MinWidth="400" MinHeight="300" ResizeMode="CanResizeWithGrip">
+    
+    
     <i:Interaction.Triggers>
         <i:EventTrigger EventName="MouseLeftButtonDown">
             <i:InvokeCommandAction Command="{Binding ResetCursorCommand}"/>

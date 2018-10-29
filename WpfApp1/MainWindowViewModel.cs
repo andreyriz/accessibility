@@ -6,12 +6,15 @@ using System.Windows;
 using System.Windows.Media;
 using gma.System.Windows;
 using UIAutomationClient;
+using System.ComponentModel;
+using System.Windows.Threading;
 
 namespace WpfApp1
-{ 
+{
     class MainWindowViewModel : BindableBase
     {
         #region margins
+        Window focusingAttention;
         UserActivityHook actHook;
         Brush borderBrush;
         Action<Cursor> setCursor;
@@ -21,6 +24,12 @@ namespace WpfApp1
         Single fontSize;
         Single height;
         Boolean isClick;
+        Boolean isClose;
+        tagRECT selectedItem;
+        IUIAutomation UIA;
+        tagPOINT points;
+        IUIAutomationElement element;
+        DispatcherTimer timer;
         #endregion
         #region properties
         public ObservableCollection<Node> TNodes { get; set; }
@@ -29,8 +38,14 @@ namespace WpfApp1
         public Single Height { get { return height; } set { height = value; OnPropertyChanged("Height"); } }
         #endregion
         #region constructors
-        public MainWindowViewModel(Action<Cursor> cursor)
+        public MainWindowViewModel(Action<Cursor> cursor, Window mainWindow)
         {
+            timer = new DispatcherTimer();
+            timer.Tick += new EventHandler(UpdateRect);
+            timer.Interval = new TimeSpan(0, 0, 1);
+            timer.Start();
+            UIA = new CUIAutomation();
+            points = new tagPOINT();
             actHook = new UserActivityHook();
             actHook.OnMouseActivity += new System.Windows.Forms.MouseEventHandler(MyKeyDown);
             Height = 15;
@@ -40,19 +55,47 @@ namespace WpfApp1
             controlCount = 1;
             TNodes = new ObservableCollection<Node>();
             isClick = false;
+            isClose = false;
+            focusingAttention = new Window()
+            {
+                ShowInTaskbar = false,
+                Topmost = true,
+                AllowsTransparency = true,
+                WindowStyle = WindowStyle.None,
+                Background = Brushes.Transparent,
+                ResizeMode = ResizeMode.NoResize,
+                BorderThickness = new Thickness(3)
+            };
+            focusingAttention.Closing += OnWindowClosing;
             ChangeFontSize();
         }
         #endregion
         #region methods
         private void MyKeyDown(object sender, System.Windows.Forms.MouseEventArgs e)
         {
+            if (BorderBrush.Equals(Brushes.Yellow))
+            {
+                if (selectedItem.top != focusingAttention.Top || selectedItem.left != focusingAttention.Left
+                    || focusingAttention.Width > selectedItem.right - selectedItem.left || focusingAttention.Width < selectedItem.right - selectedItem.left
+                    || focusingAttention.Height > selectedItem.bottom - selectedItem.top || focusingAttention.Height < selectedItem.bottom - selectedItem.top)
+                {
+                    ShowFocusingAttention(selectedItem);
+                }
+            }
+
             if (e.Button == System.Windows.Forms.MouseButtons.Left && isClick)
             {
                 try
                 {
-                    tagPOINT point = new tagPOINT { x = e.X, y = e.Y };
-                    IUIAutomation UIA = new CUIAutomation();
-                    IUIAutomationElement element = UIA.ElementFromPoint(point);
+                    points.x = e.X;
+                    points.y = e.Y;
+                    element = UIA.ElementFromPoint(points);
+                    if (BorderBrush.Equals(Brushes.Yellow))
+                    {
+                        selectedItem = element.CurrentBoundingRectangle;
+                        ShowFocusingAttention(selectedItem);
+                    }
+
                     if (TNodes.Count == 0 || child == null)
                     {
                         TNodes.Add(new ControlClass() { Name = "Control" + controlCount + "(" + element.CurrentName + " " + element.CurrentAriaRole + " " + element.CurrentFrameworkId + ")", FirstName = element.CurrentName, role = element.CurrentAriaRole, value = element.CurrentFrameworkId, Image = new BitmapImage(new Uri("Resources/fileTxt.png", UriKind.Relative)) });
@@ -67,6 +110,48 @@ namespace WpfApp1
                 }
                 catch (Exception) { }
             }
+        }
+        public void OnMainWindowClosing(object sender, CancelEventArgs e)
+        {
+            isClose = true;
+            focusingAttention.Close();
+        }
+        private void UpdateRect(object sender, EventArgs e)
+        {
+            try
+            {
+                selectedItem = element.CurrentBoundingRectangle;
+            }
+            catch (Exception) { }
+        }
+        private void OnWindowClosing(object sender, CancelEventArgs e)
+        {
+            try
+            {
+                if (isClose == true)
+                {
+                    focusingAttention.Close();
+                    e.Cancel = false;
+                }
+                else
+                {
+                    e.Cancel = true;
+                }
+            }
+            catch (Exception) { }
+        }
+        private void ShowFocusingAttention(tagRECT a)
+        {
+            try
+            {
+                focusingAttention.Width = a.right - a.left;
+                focusingAttention.Height = a.bottom - a.top;
+                focusingAttention.BorderBrush = Brushes.Yellow;
+                focusingAttention.Top = a.top;
+                focusingAttention.Left = a.left;
+                focusingAttention.Show();
+            }
+            catch (Exception) { }
         }
         private void ChangeFontSize()
         {
@@ -119,9 +204,9 @@ namespace WpfApp1
         }
         private void OnChangeBrush(object a)
         {
-            if (BorderBrush == Brushes.Gray)
+            if (BorderBrush.Equals(Brushes.Gray))
             {
-                BorderBrush = Brushes.Red;
+                BorderBrush = Brushes.Yellow;
             }
             else
             {

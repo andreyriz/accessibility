@@ -346,65 +346,65 @@ namespace gma.System.Windows
         /// <summary>
         /// Windows NT/2000/XP: Installs a hook procedure that monitors low-level mouse input events.
         /// </summary>
-        private const int WH_MOUSE_LL       = 14;
+        private const int WH_MOUSE_LL = 14;
         /// <summary>
         /// Windows NT/2000/XP: Installs a hook procedure that monitors low-level keyboard  input events.
         /// </summary>
-        private const int WH_KEYBOARD_LL    = 13;
+        private const int WH_KEYBOARD_LL = 13;
 
         /// <summary>
         /// Installs a hook procedure that monitors mouse messages. For more information, see the MouseProc hook procedure. 
         /// </summary>
-        private const int WH_MOUSE          = 7;
+        private const int WH_MOUSE = 7;
         /// <summary>
         /// Installs a hook procedure that monitors keystroke messages. For more information, see the KeyboardProc hook procedure. 
         /// </summary>
-        private const int WH_KEYBOARD       = 2;
+        private const int WH_KEYBOARD = 2;
 
         /// <summary>
         /// The WM_MOUSEMOVE message is posted to a window when the cursor moves. 
         /// </summary>
-        private const int WM_MOUSEMOVE      = 0x200;
+        private const int WM_MOUSEMOVE = 0x200;
         /// <summary>
         /// The WM_LBUTTONDOWN message is posted when the user presses the left mouse button 
         /// </summary>
-        private const int WM_LBUTTONDOWN    = 0x201;
+        private const int WM_LBUTTONDOWN = 0x201;
         /// <summary>
         /// The WM_RBUTTONDOWN message is posted when the user presses the right mouse button
         /// </summary>
-        private const int WM_RBUTTONDOWN    = 0x204;
+        private const int WM_RBUTTONDOWN = 0x204;
         /// <summary>
         /// The WM_MBUTTONDOWN message is posted when the user presses the middle mouse button 
         /// </summary>
-        private const int WM_MBUTTONDOWN    = 0x207;
+        private const int WM_MBUTTONDOWN = 0x207;
         /// <summary>
         /// The WM_LBUTTONUP message is posted when the user releases the left mouse button 
         /// </summary>
-        private const int WM_LBUTTONUP      = 0x202;
+        private const int WM_LBUTTONUP = 0x202;
         /// <summary>
         /// The WM_RBUTTONUP message is posted when the user releases the right mouse button 
         /// </summary>
-        private const int WM_RBUTTONUP      = 0x205;
+        private const int WM_RBUTTONUP = 0x205;
         /// <summary>
         /// The WM_MBUTTONUP message is posted when the user releases the middle mouse button 
         /// </summary>
-        private const int WM_MBUTTONUP      = 0x208;
+        private const int WM_MBUTTONUP = 0x208;
         /// <summary>
         /// The WM_LBUTTONDBLCLK message is posted when the user double-clicks the left mouse button 
         /// </summary>
-        private const int WM_LBUTTONDBLCLK  = 0x203;
+        private const int WM_LBUTTONDBLCLK = 0x203;
         /// <summary>
         /// The WM_RBUTTONDBLCLK message is posted when the user double-clicks the right mouse button 
         /// </summary>
-        private const int WM_RBUTTONDBLCLK  = 0x206;
+        private const int WM_RBUTTONDBLCLK = 0x206;
         /// <summary>
         /// The WM_RBUTTONDOWN message is posted when the user presses the right mouse button 
         /// </summary>
-        private const int WM_MBUTTONDBLCLK  = 0x209;
+        private const int WM_MBUTTONDBLCLK = 0x209;
         /// <summary>
         /// The WM_MOUSEWHEEL message is posted when the user presses the mouse wheel. 
         /// </summary>
-        private const int WM_MOUSEWHEEL     = 0x020A;
+        private const int WM_MOUSEWHEEL = 0x020A;
 
         /// <summary>
         /// The WM_KEYDOWN message is posted to the window with the keyboard focus when a nonsystem 
@@ -435,9 +435,9 @@ namespace gma.System.Windows
         /// </summary>
         private const int WM_SYSKEYUP = 0x105;
 
-        private const byte VK_SHIFT     = 0x10;
-        private const byte VK_CAPITAL   = 0x14;
-        private const byte VK_NUMLOCK   = 0x90;
+        private const byte VK_SHIFT = 0x10;
+        private const byte VK_CAPITAL = 0x14;
+        private const byte VK_NUMLOCK = 0x90;
 
         #endregion
 
@@ -449,37 +449,7 @@ namespace gma.System.Windows
         {
             Start();
         }
-         internal enum OBJID : uint
-        {
-            WINDOW = 0x00000000,
-            SYSMENU = 0xFFFFFFFF,
-            TITLEBAR = 0xFFFFFFFE,
-            MENU = 0xFFFFFFFD,
-            CLIENT = 0xFFFFFFFC,
-            VSCROLL = 0xFFFFFFFB,
-            HSCROLL = 0xFFFFFFFA,
-            SIZEGRIP = 0xFFFFFFF9,
-            CARET = 0xFFFFFFF8,
-            CURSOR = 0xFFFFFFF7,
-            ALERT = 0xFFFFFFF6,
-            SOUND = 0xFFFFFFF5,
-        }
-        [DllImport("user32.dll")]
-        private static extern IntPtr WindowFromPoint(Point point);
-        [DllImport("oleacc.dll")]
-        internal static extern int AccessibleObjectFromWindow(IntPtr hwnd,uint id,ref Guid iid, [In, Out, MarshalAs(UnmanagedType.IUnknown)] ref object ppvObject);
-        public IAccessible GetObjectUnderMouse(POINT point)
-        {
-            Guid guid = new Guid("{618736E0-3C3D-11CF-810C-00AA00389B71}");
-            Object obj = null;
-            int retval = AccessibleObjectFromWindow(WindowFromPoint(new Point(point.X, point.Y)), (uint)OBJID.WINDOW,ref guid,ref obj);
-            if (obj != null)
-            {
-                return (IAccessible)obj;
-            }
-            else
-                return null;
-        }
+
         /// <summary>
         /// Creates an instance of UserActivityHook object and installs both or one of mouse and/or keyboard hooks and starts rasing events
         /// </summary>
@@ -659,7 +629,7 @@ namespace gma.System.Windows
                 }
             }
         }
-        
+
         /// <summary>
         /// A callback function which will be called every time a mouse activity detected.
         /// </summary>
@@ -727,12 +697,12 @@ namespace gma.System.Windows
                     else clickCount = 1;
 
                 //generate event 
-                 MouseEventArgs e = new MouseEventArgs(
-                                                    button,
-                                                    clickCount,
-                                                    mouseHookStruct.pt.X,
-                                                    mouseHookStruct.pt.Y,
-                                                    mouseDelta);
+                MouseEventArgs e = new MouseEventArgs(
+                                                   button,
+                                                   clickCount,
+                                                   mouseHookStruct.pt.X,
+                                                   mouseHookStruct.pt.Y,
+                                                   mouseDelta);
                 //raise it
                 OnMouseActivity(this, e);
             }

@@ -24,8 +24,9 @@ namespace WpfApp1
         public MainWindow()
         { 
             InitializeComponent();
-            main = new MainWindowViewModel(c => this.Cursor = c);
+            main = new MainWindowViewModel(c => this.Cursor = c,this);
             DataContext = main;
+            Closing += main.OnMainWindowClosing;
         }
         private void TreeView_SelectedItemChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
         {

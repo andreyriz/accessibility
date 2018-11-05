@@ -30,11 +30,22 @@ namespace WpfApp1
         tagPOINT points;
         IUIAutomationElement element;
         DispatcherTimer timer;
+        ICommand changeColor;
+        ICommand addGroup;
+        ICommand addControl;
+        ICommand removeElement;
+        ICommand resetcursor;
         #endregion
         #region properties
         public ObservableCollection<Node> TNodes { get; set; }
-        public Brush BorderBrush { get { return borderBrush; } set { borderBrush = value; OnPropertyChanged("BorderBrush"); } }
-        public Single FontSize { get { return fontSize; } set { fontSize = value; OnPropertyChanged("FontSize"); } }
+        public Brush BorderBrush {
+            get { return borderBrush; }
+            private set { borderBrush = value;
+                OnPropertyChanged(nameof(BorderBrush)); } }
+        public Single FontSize {
+            get { return fontSize; }
+            private set { fontSize = value;
+                OnPropertyChanged("FontSize"); } }
         public Single Height { get { return height; } set { height = value; OnPropertyChanged("Height"); } }
         #endregion
         #region constructors
@@ -42,7 +53,7 @@ namespace WpfApp1
         {
             timer = new DispatcherTimer();
             timer.Tick += new EventHandler(UpdateRect);
-            timer.Interval = new TimeSpan(0, 0, 1);
+            timer.Interval = TimeSpan.FromSeconds(1);
             timer.Start();
             UIA = new CUIAutomation();
             points = new tagPOINT();
@@ -126,32 +137,16 @@ namespace WpfApp1
         }
         private void OnWindowClosing(object sender, CancelEventArgs e)
         {
-            try
-            {
-                if (isClose == true)
-                {
-                    focusingAttention.Close();
-                    e.Cancel = false;
-                }
-                else
-                {
-                    e.Cancel = true;
-                }
-            }
-            catch (Exception) { }
+             e.Cancel = !isClose;
         }
         private void ShowFocusingAttention(tagRECT a)
         {
-            try
-            {
                 focusingAttention.Width = a.right - a.left;
                 focusingAttention.Height = a.bottom - a.top;
                 focusingAttention.BorderBrush = Brushes.Yellow;
                 focusingAttention.Top = a.top;
                 focusingAttention.Left = a.left;
                 focusingAttention.Show();
-            }
-            catch (Exception) { }
         }
         private void ChangeFontSize()
         {
@@ -239,7 +234,7 @@ namespace WpfApp1
             {
                 foreach (var z in i.Nodes)
                 {
-                    if (z.Equals(child))
+                    if (z == child)
                     {
                         i.Nodes.Remove(z);
                         break;
@@ -277,11 +272,11 @@ namespace WpfApp1
         }
         #endregion
         #region Commands
-        public ICommand ChangeColor { get { return new RelayCommand(OnChangeBrush); } }
-        public ICommand AddGroupCommand { get { return new RelayCommand(OnAddGroup); } }
-        public ICommand AddControlCommand { get { return new RelayCommand(OnAddControl); } }
-        public ICommand RemoveElementCommand { get { return new RelayCommand(OnRemoveElement); } }
-        public ICommand ResetCursorCommand { get { return new RelayCommand(OnResetCursor); } }
+        public ICommand ChangeColor { get { if (changeColor == null) changeColor = new RelayCommand(OnChangeBrush); return changeColor; } }
+        public ICommand AddGroupCommand { get { if (addGroup == null) addGroup = new RelayCommand(OnAddGroup); return addGroup; } }
+        public ICommand AddControlCommand { get { if (addControl == null) addControl = new RelayCommand(OnAddControl); return addControl; } }
+        public ICommand RemoveElementCommand { get { if (removeElement == null) removeElement = new RelayCommand(OnRemoveElement); return removeElement; } }
+        public ICommand ResetCursorCommand { get { if (resetcursor == null) resetcursor = new RelayCommand(OnResetCursor); return resetcursor; } }
         #endregion
     }
 }
